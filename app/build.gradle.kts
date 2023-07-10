@@ -51,6 +51,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        allWarningsAsErrors = false
+
+
     }
     buildFeatures {
         compose = true
@@ -76,6 +79,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.annotation:annotation:1.3.0")
 
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")
