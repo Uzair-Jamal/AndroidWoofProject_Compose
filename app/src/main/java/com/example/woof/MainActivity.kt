@@ -23,10 +23,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -114,6 +116,10 @@ fun DogItem(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val color by animateColorAsState(
+        targetValue = if(expanded) MaterialTheme.colorScheme.tertiaryContainer
+        else MaterialTheme.colorScheme.primaryContainer
+    )
     Card(
         modifier = modifier
 
@@ -127,6 +133,16 @@ fun DogItem(
 //                    )
 //                )
 //        ) {
+        Column(modifier = Modifier
+            .animateContentSize (
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessHigh
+                )
+                    ).background(color = color )
+        ) {
+
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -134,12 +150,28 @@ fun DogItem(
             ) {
                 DogIcon(dog.imageResourceId)
                 DogInformation(dog.name, dog.age)
-//                Spacer(Modifier.weight(1f))
-//                DogItemButton(
+                Spacer(Modifier.weight(1f))
+                DogItemButton(
+                    expanded = expanded,
+                    onClick = {expanded =! expanded }
+                )
+            }
+            if(expanded) {
+                DogHobby(
+                    dog.hobbies,
+                    modifier = Modifier.padding(
+                        start = dimensionResource(id = R.dimen.padding_medium),
+                        top = dimensionResource(id = R.dimen.padding_small),
+                        end = dimensionResource(id = R.dimen.padding_medium),
+                        bottom = dimensionResource(id = R.dimen.padding_medium)
+                    )
+                )
+            }
+            //                DogItemButton(
 //                    expanded = expanded,
 //                    onClick = { expanded = !expanded },
 //                )
-           }
+//           }
 //            if (expanded) {
 //                DogHobby(
 //                    dog.hobbies, modifier = Modifier.padding(
@@ -151,6 +183,7 @@ fun DogItem(
 //                )
 //            }
         }
+     }
     }
 //}
 
@@ -179,6 +212,42 @@ fun DogItem(
 //        )
 //    }
 //}
+
+@Composable
+private fun DogItemButton(
+    expanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier
+    ){
+        Icon(
+            imageVector = if(expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+            contentDescription = stringResource(R.string.expand_button_content_description),
+            tint = MaterialTheme.colorScheme.secondary
+        )
+    }
+}
+@Composable
+fun DogHobby(
+    @StringRes dogHobby: Int,
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier
+    ){
+        Text(
+            text = stringResource(id = R.string.about),
+            style = MaterialTheme.typography.labelSmall
+        )
+        Text(
+            text = stringResource(dogHobby),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
 
 /**
  * Composable that displays a Top Bar with an icon and text.
@@ -272,24 +341,24 @@ fun DogInformation(
  * @param dogHobby is the resource ID for the text string of the hobby to display
  * @param modifier modifiers to set to this composable
  */
-@Composable
-fun DogHobby(
-    @StringRes dogHobby: Int,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(
-            text = stringResource(R.string.about),
-            style = MaterialTheme.typography.labelSmall
-        )
-        Text(
-            text = stringResource(dogHobby),
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
-}
+//@Composable
+//fun DogHobby(
+//    @StringRes dogHobby: Int,
+//    modifier: Modifier = Modifier
+//) {
+//    Column(
+//        modifier = modifier
+//    ) {
+//        Text(
+//            text = stringResource(R.string.about),
+//            style = MaterialTheme.typography.labelSmall
+//        )
+//        Text(
+//            text = stringResource(dogHobby),
+//            style = MaterialTheme.typography.bodyLarge
+//        )
+//    }
+//}
 
 /**
  * Composable that displays what the UI of the app looks like in light theme in the design tab.
